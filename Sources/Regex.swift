@@ -9,8 +9,8 @@
 import Foundation
 
 public struct Match {
-    var range: Range<String.Index>
-    var value: String
+    public var range: Range<String.Index>
+    public var value: String
 }
 
 public struct Regex {
