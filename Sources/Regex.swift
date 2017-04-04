@@ -8,21 +8,38 @@
 
 import Foundation
 
+public struct RegexPattern: ExpressibleByStringLiteral {
+    let rawValue: String
+
+    public init(stringLiteral value: String) {
+        self.rawValue = value
+    }
+
+    public init(extendedGraphemeClusterLiteral value: String) {
+        self.rawValue = value
+    }
+
+    public init(unicodeScalarLiteral value: String) {
+        self.rawValue = value
+    }
+}
+
 public struct Match {
     public var range: Range<String.Index>
     public var value: String
 }
 
 public struct Regex {
-    let expression: String
+    let expression: RegexPattern
 
-    init(expression: String) {
+    init(expression: RegexPattern) {
         self.expression = expression
     }
 
     public func match(_ someString: String) -> Bool {
         do {
-            let regularExpression = try NSRegularExpression(pattern: expression, options: [])
+            let regularExpression = try NSRegularExpression(pattern: expression.rawValue,
+                                                            options: [])
             let range = NSRange(location: 0, length: someString.characters.count)
             let matches = regularExpression.numberOfMatches(in: someString,
                                                             options: [],
@@ -34,7 +51,8 @@ public struct Regex {
     public func matches(_ someString: String) -> [Match] {
         var matches = [Match]()
         do {
-            let regularExpression = try NSRegularExpression(pattern: expression, options: [])
+            let regularExpression = try NSRegularExpression(pattern: expression.rawValue,
+                                                            options: [])
             let range = NSRange(location: 0, length: someString.characters.count)
             let results = regularExpression.matches(in: someString,
                                                     options: [],
@@ -59,17 +77,20 @@ public struct Regex {
 }
 
 public extension String {
-    public func match(_ pattern: String) -> Bool {
+    @discardableResult
+    public func match(_ pattern: RegexPattern) -> Bool {
         return Regex(expression: pattern).match(self)
     }
 
-    public func matches(_ pattern: String) -> [Match] {
+    @discardableResult
+    public func matches(_ pattern: RegexPattern) -> [Match] {
         return Regex(expression: pattern).matches(self)
     }
 
-    public func replace(_ pattern: String, with: String) -> String {
+    @discardableResult
+    public func replace(_ pattern: RegexPattern, with: String) -> String {
         do {
-            let regularExpression = try NSRegularExpression(pattern: pattern, options: [])
+            let regularExpression = try NSRegularExpression(pattern: pattern.rawValue, options: [])
             let range = NSRange(location: 0, length: self.characters.count)
             return regularExpression.stringByReplacingMatches(in: self,
                                                               options: [],
@@ -79,8 +100,24 @@ public extension String {
         return self
     }
 
-    public func replace(_ pattern: String, using: (String, [Match]) -> String) -> String {
+    @discardableResult
+    public func replace(_ pattern: RegexPattern, using: (String, [Match]) -> String) -> String {
         let matches = self.matches(pattern)
         return using(self, matches)
+    }
+
+    @discardableResult
+    public func replace(_ patterns: [RegexPattern], with string: String) -> String {
+        return replace(patterns, with: [String](repeating: string, count: patterns.count))
+    }
+
+    @discardableResult
+    public func replace(_ patterns: [RegexPattern], with strings: [String]) -> String {
+        let merged = Array(zip(patterns, strings))
+        var str = self
+        for (pattern, string) in merged {
+            str = str.replace(pattern, with: string)
+        }
+        return str
     }
 }
