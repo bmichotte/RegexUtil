@@ -32,6 +32,13 @@ class RegexUtilMacTests: XCTestCase {
         XCTAssertFalse(regex.match("bar"), "^foo$ match bar")
     }
 
+    func testInvalidRegex() {
+        let regex = Regex(expression: "([a-")
+        XCTAssertFalse(regex.match("hello"), "This should throw an exception")
+        XCTAssertEqual(regex.matches("Hello").count, 0, "This should throw an exception")
+        XCTAssertEqual("hello".replace("([hu", with: "hu"), "hello", "This should throw an exception")
+    }
+
     func testRegexMatches() {
         let regex = Regex(expression: "([A-Za-z0-9]+)")
         let matches = regex.matches("hello, it's me")
