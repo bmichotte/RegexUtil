@@ -59,14 +59,14 @@ public struct Regex {
                                                     range: range)
             for result in results {
                 for index in 1 ..< result.numberOfRanges {
-                    let resultRange = result.rangeAt(index)
+                    let resultRange = result.range(at: index)
                     let startPos = someString.characters
                         .index(someString.startIndex, offsetBy: resultRange.location)
                     let end = resultRange.location + resultRange.length
                     let endPos = someString.characters.index(someString.startIndex, offsetBy: end)
                     let range = startPos ..< endPos
 
-                    let value = someString.substring(with: range)
+                    let value = String(someString[range])
                     let match = Match(range: range, value: value)
                     matches.append(match)
                 }
