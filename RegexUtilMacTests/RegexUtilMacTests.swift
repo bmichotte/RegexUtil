@@ -92,4 +92,22 @@ class RegexUtilMacTests: XCTestCase {
         let replaced = string.replace(patterns, with: ["3", "0", "1"])
         XCTAssertEqual(replaced, "h3ll0, 1t's m3")
     }
+    
+    @available(OSX 10.13, *)
+    func testMatchKeys() {
+        let string = "San Francisco, CA"
+        let regex = Regex(expression: "^(?<city>.+), (?<state>[A-Z]{2})$")
+        let matches = regex.groupMatches(string)
+        XCTAssertEqual(matches.count, 2)
+        XCTAssertEqual(matches["city"], "San Francisco")
+        XCTAssertEqual(matches["state"], "CA")
+    }
+    
+    @available(OSX 10.13, *)
+    func testMatchKeyUsingString() {
+        let matches = "San Francisco, CA".groupMatches(pattern: "^(?<city>.+), (?<state>[A-Z]{2})$")
+        XCTAssertEqual(matches.count, 2)
+        XCTAssertEqual(matches["city"], "San Francisco")
+        XCTAssertEqual(matches["state"], "CA")
+    }
 }

@@ -73,6 +73,28 @@ public struct Regex {
         } catch { }
         return matches
     }
+    
+    @available(OSX 10.13, *)
+    public func groupMatches(_ someString: String) -> [String: String] {
+        let nameRegex = Regex(expression: "\\(\\?\\<(\\w+)\\>")
+        let nameMatches = nameRegex.matches(expression.rawValue)
+        let names = nameMatches.map { $0.value }
+        
+        guard let regex = try? NSRegularExpression(pattern: expression.rawValue, options: []) else {
+            return [:]
+        }
+        let result = regex.firstMatch(in: someString, options: [], range: NSMakeRange(0, someString.count))
+        var dict: [String: String] = [:]
+        for name in names {
+            if let nsrange = result?.range(withName: name),
+                let range = Range(nsrange, in: someString),
+                nsrange.location != NSNotFound {
+                dict[name] = String(someString[range])
+            }
+        }
+        
+        return dict
+    }
 }
 
 public extension String {
@@ -84,6 +106,12 @@ public extension String {
     @discardableResult
     public func matches(_ pattern: RegexPattern) -> [Match] {
         return Regex(expression: pattern).matches(self)
+    }
+    
+    @available(OSX 10.13, *)
+    @discardableResult
+    public func groupMatches(pattern: RegexPattern) -> [String: String] {
+        return Regex(expression: pattern).groupMatches(self)
     }
 
     @discardableResult

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'RegexUtil'
-  s.version          = '1.0'
+  s.version          = '1.1'
   s.license          = 'MIT'
   s.summary          = 'RegexUtil'
   s.homepage         = 'https://github.com/bmichotte/RegexUtil'
