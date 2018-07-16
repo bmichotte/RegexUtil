@@ -40,7 +40,7 @@ public struct Regex {
         do {
             let regularExpression = try NSRegularExpression(pattern: expression.rawValue,
                                                             options: [])
-            let range = NSRange(location: 0, length: someString.characters.count)
+            let range = NSRange(location: 0, length: someString.count)
             let matches = regularExpression.numberOfMatches(in: someString,
                                                             options: [],
                                                             range: range)
@@ -53,17 +53,16 @@ public struct Regex {
         do {
             let regularExpression = try NSRegularExpression(pattern: expression.rawValue,
                                                             options: [])
-            let range = NSRange(location: 0, length: someString.characters.count)
+            let range = NSRange(location: 0, length: someString.count)
             let results = regularExpression.matches(in: someString,
                                                     options: [],
                                                     range: range)
             for result in results {
                 for index in 1 ..< result.numberOfRanges {
                     let resultRange = result.range(at: index)
-                    let startPos = someString.characters
-                        .index(someString.startIndex, offsetBy: resultRange.location)
+                    let startPos = someString.index(someString.startIndex, offsetBy: resultRange.location)
                     let end = resultRange.location + resultRange.length
-                    let endPos = someString.characters.index(someString.startIndex, offsetBy: end)
+                    let endPos = someString.index(someString.startIndex, offsetBy: end)
                     let range = startPos ..< endPos
 
                     let value = String(someString[range])
@@ -91,7 +90,7 @@ public extension String {
     public func replace(_ pattern: RegexPattern, with: String) -> String {
         do {
             let regularExpression = try NSRegularExpression(pattern: pattern.rawValue, options: [])
-            let range = NSRange(location: 0, length: self.characters.count)
+            let range = NSRange(location: 0, length: self.count)
             return regularExpression.stringByReplacingMatches(in: self,
                                                               options: [],
                                                               range: range,
